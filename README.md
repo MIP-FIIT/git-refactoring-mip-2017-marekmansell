@@ -11,7 +11,8 @@ This repository contains a refactored version of *Project 1* for *Procedural Pro
 *  Sphinx Documentation (docs file)
 *  Translate everything into English (except strings)
 *  Create functions for specific tasks in order to improve readibility
-  
+*  Create header file
+*  Write guide for developers (maybe CONTRIB file?)  
 
 # Author
 Marek Mansell - Student of FIIT, Slovak University of Technology
