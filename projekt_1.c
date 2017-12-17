@@ -3,8 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define INPUT_FILE      "predaj.txt"    /*  file with car data          */
-#define MAX_LINE_CHARS  50              /* longest possible line input  */
+#define INPUT_FILE          "predaj.txt"    /* file with car data               */
+#define MAX_LINE_CHARS      50              /* longest possible line input      */
+#define LICENCE_PLATE_CHARS 7               /* num of chars in a licence plate  */
 
 /*
  * Function:  OpenRecords
@@ -112,30 +113,61 @@ int prikaz_o(long current_date, FILE *file)
     return 0;
 }
 
-int prikaz_n(FILE *file, char **spz)
+
+/*
+ * Function:  LoadLicencePlates
+ * --------------------
+ * loads records from INPUT_FILE and stores them into an array
+ *
+ *  file:           pointer to main FILE object
+ *  licence_plates: pointer to licence plate array
+ *
+ *  returns: 0
+ */
+
+int LoadLicencePlates(FILE *file, char **licence_plates)
 {
-    char buffer[50];
-    int cars = 0;
+    char buffer[MAX_LINE_CHARS];    /*  buffer for line input */
+    int puchaces = 0;               /*  stores the number of purchaces  */
+
+    /* check whether file is open   */
     if (file == NULL)
         return 0;
-    if (*spz != NULL)
-        free(*spz);
-    *spz = NULL;
-    rewind(file);
-    *spz = (char*)realloc(*spz, (1));
-    *spz[0] = '\0';
-    while (!(feof(file)))
+
+    /* delete any existing records from the array   */
+    if (*licence_plates != NULL)
     {
-        fgets(buffer, 50, file);
-        fscanf(file, "%s", &buffer);
-        cars++;
-        *spz = (char*) realloc(*spz, (cars*7)+1);
-        strcat(*spz, buffer);
-        fgets(buffer, 50, file);
-        fgets(buffer, 50, file);
-        fgets(buffer, 50, file);
-        fgets(buffer, 50, file);
-        if (!(feof(file)))          /*  skips blank line in input file  */
+        free(*licence_plates);
+        *licence_plates = NULL;
+    }
+
+    rewind(file);   /* move cursor to beginning of INPUT_FILE   */
+
+    /* create single char string '\0'   */
+    *licence_plates = (char*)realloc(*licence_plates, sizeof(char));
+    *licence_plates[0] = '\0';
+
+    /*
+     *  loop through all the records and append the lecense plate number
+     *  to the 'licence_plates' string
+     */
+    while (feof(file) == 0)
+    {
+        puchaces++;
+
+        fgets(buffer, MAX_LINE_CHARS, file);    /*  read customer name              */
+        fscanf(file, "%s\n", &buffer);          /*  read license plate number       */
+
+        /*  increase 'licence_plates' string size by LICENCE_PLATE_CHARS            */
+        *licence_plates = (char*) realloc(*licence_plates, (puchaces * LICENCE_PLATE_CHARS)+1);
+
+        strcat(*licence_plates, buffer);        /*  append new licence plate number */
+        fgets(buffer, MAX_LINE_CHARS, file);    /*  read car type                   */
+        fgets(buffer, MAX_LINE_CHARS, file);    /*  read car price                  */
+        fgets(buffer, MAX_LINE_CHARS, file);    /*  read date of purchase           */
+
+        /*  skips blank line between records  */
+        if (feof(file) == 0)
             fscanf(file, "\n");
     }
     return 0;
@@ -266,10 +298,10 @@ int main()
                 break;
 
             /*
-             * create licence plate array
+             * load licence plates and store them in to an array
              */
             case 'n':
-                prikaz_n(file, &spz);
+                LoadLicencePlates(file, &spz);
                 break;
 
             /*
