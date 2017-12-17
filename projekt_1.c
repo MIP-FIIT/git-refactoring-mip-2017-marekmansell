@@ -4,6 +4,8 @@
  * This work and documentation can be found on github
  * https://github.com/MIP-FIIT/git-refactoring-mip-2017-marekmansell
  *
+ * Online docs: http://marekmansell.sk/mip/
+ *
  * The MIT License (MIT)
  *
  * Copyright (c) 2017 Marek Mansell
