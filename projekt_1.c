@@ -1,35 +1,67 @@
 #pragma warning(disable : 4996)     /*  used beacuse of newer compiler versions */
 
 #include <stdio.h>
+#include <stdlib.h>
 
-#define INPUT_FILE "predaj.txt"     /*  file with car data  */
+#define INPUT_FILE      "predaj.txt"    /*  file with car data          */
+#define MAX_LINE_CHARS  50              /* longest possible line input  */
 
+/*
+ * Function:  OpenRecords
+ * --------------------
+ * loads records from INPUT_FILE and prints them
+ *
+ *  file: pointer to main FILE object
+ *
+ *  returns: pointer fo FILE onject
+ *           returns NULL on error (if file could not be open)
+ */
 
-FILE* prikaz_v(FILE *file)
+FILE* OpenRecords(FILE *file)
 {
-    char s[50];
+    char str_buffer[MAX_LINE_CHARS];    /*  buffer for line input */
+
+    /*
+     *  Open INPUT_FILE, if unsuccefful return NULL
+     */
     if ((file = fopen(INPUT_FILE, "r")) == NULL)
     {
         printf("Neotvoreny subor\n");
         return NULL;
     }
 
-    while (!(feof(file)))
+    /*
+     * Loop through all the records and print them line by line
+     */
+    while (feof(file) == 0)
     {
-        fgets(s, 50, file);
-        printf("meno priezvisko: %s", s);
-        fscanf(file, "%s", &s);
-        printf("SPZ: %s\n", s);
-        fscanf(file, "%s", &s);
-        printf("typ auta: %s\n", s);
-        fscanf(file, "%s", &s);
-        printf("cena: %s\n", s);
-        fscanf(file, "%s", &s);
-        printf("datum: %s\n", s);
+        /* read and print customer name */
+        fgets(str_buffer, MAX_LINE_CHARS, file);
+        printf("meno priezvisko: %s", str_buffer);
+
+        /* read and print car licence plate */
+        fscanf(file, "%s", &str_buffer);
+        printf("SPZ: %s\n", str_buffer);
+
+        /* read and print car type  */
+        fscanf(file, "%s", &str_buffer);
+        printf("typ auta: %s\n", str_buffer);
+
+        /* read and print car price */
+        fscanf(file, "%s", &str_buffer);
+        printf("cena: %s\n", str_buffer);
+
+        /* read and print date of purchase  */
+        fscanf(file, "%s", &str_buffer);
+        printf("datum: %s\n", str_buffer);
+
         printf("\n");
-        if (!(feof(file)))  skips blank line in input file
+
+        /*  skips blank line between records    */
+        if (feof(file) == 0)
             fscanf(file, "\n");
     }
+
     return file;
 }
 
@@ -47,7 +79,7 @@ int prikaz_o(long current_date, FILE *file)
     {
         /*
          * File reading part
-         */tar -xvf/
+         */
         fgets(name, 50, file);
         fscanf(file, "%s", &spz);
         fscanf(file, "%d", &car_age);
@@ -220,10 +252,10 @@ int main()
                 break;
 
             /*
-             * load records
+             * open records and print them out
              */
             case 'v':
-                file = prikaz_v(file);
+                file = OpenRecords(file);
                 break;
 
             /*
