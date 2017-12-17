@@ -66,46 +66,77 @@ FILE* OpenRecords(FILE *file)
     return file;
 }
 
-int prikaz_o(long current_date, FILE *file)
+/*
+ * Function:  EmployeeBonus
+ * --------------------
+ * prints out the bonuses each employee should receive to the current date
+ *
+ *  current_date: int representation on current date
+ *  file:         pointer to main FILE object
+ *
+ *  returns: 0
+ */
+
+int EmployeeBonus(long current_date, FILE *file)
 {
-    char name[50], spz[8];
-    int car_age;
-    double car_price;
-    long employee_date;
+    char licence_plate[LICENCE_PLATE_CHARS+1];  /* buffer for licence plate     */
+    char name[MAX_LINE_CHARS];  /* buffer for seller employee   */
+    int car_age;                /* buffer for car age           */
+    double car_price;           /* buffer for car price         */
+    long purchase_date;         /* buffer for date of purchace  */
+
+    /* check whether file is open   */
     if (file == NULL)
         return -1;
 
-    rewind(file);
-    while (!(feof(file)))
+    rewind(file);   /* move cursor to beginning of INPUT_FILE   */
+
+    /*
+     *  Read through the file and print the bonuses
+     */
+    while (feof(file) == 0)
     {
         /*
          * File reading part
          */
-        fgets(name, 50, file);
-        fscanf(file, "%s", &spz);
-        fscanf(file, "%d", &car_age);
-        fscanf(file, "%lf", &car_price);
-        fscanf(file, "%ld", &employee_date);
+        fgets(name, MAX_LINE_CHARS, file);      /* read emplayee name   */
+        fscanf(file, "%s", &licence_plate);     /* read licence plate   */
+        fscanf(file, "%d", &car_age);           /* read car age         */
+        fscanf(file, "%lf", &car_price);        /* read car price       */
+        fscanf(file, "%ld", &purchase_date);    /* read purchase date   */
+
         if (!(feof(file)))                      /*  skips blank line in input file  */
             fscanf(file, "\n");
+
 
         /*
          * Logic and printing part
          */
-        if (current_date - employee_date >= 10000)
+        if (current_date - purchase_date >= 10000)  /* 10000 is one year    */
         {
-            int i = 0;
+            int char_index = 0;     /* used in for cycle    */
+
+            /*
+             *  print employee name by character until '\n' character
+             */
             while (1)
             {
-                if (name[i] != '\n')
-                    printf("%c", name[i]);
-                else break;
-                i++;
+                if (name[char_index] != '\n')
+                    printf("%c", name[char_index]);
+                else
+                    break;
+                char_index++;
             }
-            printf(" %s ", spz);
-            if (car_age == 1)
+
+            /* print licen plate    */
+            printf(" %s ", licence_plate);
+
+            /*
+             *  print employee bonus
+             */
+            if (car_age == 1)       /* if new car   */
                 printf("%.2lf\n", car_price*0.015);
-            else if (car_age == 0)
+            else if (car_age == 0)  /* if old car   */
                 printf("%.2lf\n", car_price*0.022);
         }
 
@@ -305,8 +336,8 @@ int main()
              * employee bonus
              */
             case 'o':
-                scanf("%ld", &date);
-                prikaz_o(date, file);
+                scanf("%ld", &date);        /* load current date parameter  */
+                EmployeeBonus(date, file);
                 break;
 
             /*
