@@ -1,6 +1,9 @@
 # MIP - Git Refactoring
 This repository contains a refactored version of *Project 1* for *Procedural Programming*.
 
+# Documentation
+There is an online documentation hosted on http://marekmansell.sk/mip/
+
 # To Do List
 *  ~~Rename variables to appropriate names~~
 *  ~~Replace parameter numbers with constants (#define)~~

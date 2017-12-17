@@ -1,3 +1,6 @@
+# Sphinx
+docs/_build/*
+
 # Linux binary
 projekt_1
 
