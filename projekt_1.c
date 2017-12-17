@@ -173,16 +173,42 @@ int LoadLicencePlates(FILE *file, char **licence_plates)
     return 0;
 }
 
-int prikaz_s(char *spz)
+/*
+ * Function:  PrintLicencePlates
+ * --------------------
+ * prints all licence plates from memory
+ * in a 'XX 000 XX\n' format
+ *
+ *  licence_plates: pointer to licence plates string
+ *
+ *  returns: 0
+ */
+
+int PrintLicencePlates(char *licence_plates)
 {
-    if (spz == NULL)
+    int current_plate_index;    /* used in for cycle            */
+    int first_plate_char;       /* used in for cycle            */
+    int num_of_plates;          /* store total num of plates    */
+
+    /* check whether icence plates are loaded, otherwise return 0   */
+    if (licence_plates == NULL)
     {
         printf("Pole nie je vytvorene\n");
         return 0;
     }
-    int i, plates = strlen(spz)/7;
-    for (i = 0; i < plates; i++)
-        printf("%.2s %.3s %.2s\n", spz+i*7, spz+i*7+2, spz+i*7+5);
+
+    /* divide total lenght on string by lenght of 1 licence plate to get number of plates   */
+    num_of_plates = strlen(licence_plates)/LICENCE_PLATE_CHARS;
+
+    /*
+     * print all licence plates in a 'XX 000 XX\n' format
+     */
+    for (current_plate_index = 0; current_plate_index < num_of_plates; current_plate_index++)
+    {
+        first_plate_char = licence_plates + (current_plate_index * LICENCE_PLATE_CHARS);
+        printf("%.2s %.3s %.2s\n", first_plate_char, first_plate_char+2, first_plate_char+5);
+    }
+
     return 0;
 }
 
@@ -305,10 +331,10 @@ int main()
                 break;
 
             /*
-             * print licence plates
+             * prints licence plates
              */
             case 's':
-                prikaz_s(spz);
+                PrintLicencePlates(spz);
                 break;
 
             /*
