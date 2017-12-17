@@ -243,23 +243,54 @@ int PrintLicencePlates(char *licence_plates)
     return 0;
 }
 
-int prikaz_p(char *spz)
+
+/*
+ * Function:  PrintPalindromes
+ * --------------------
+ * prints all licence plates from memory which are palindomes
+ * in a 'XX\n' format
+ *
+ *  licence_plates: pointer to licence plates string
+ *
+ *  returns: 0
+ */
+
+int PrintPalindromes(char *licence_plates)
 {
-    if (spz == NULL)
+    /* check whether icence plates are loaded, otherwise return 0   */
+    if (licence_plates == NULL)
     {
         printf("Pole nie je vytvorene\n");
         return 0;
     }
-    int i, j, plates = strlen(spz) / 7;
-    for (i = 0; i < plates; i++)
+
+    int plate_id, char_num;             /* used in for cycle  */
+    int left_char_id, right_char_id;    /* used in for cycle  */
+    int num_of_plates;                  /* stores the number of licence plates  */
+
+    num_of_plates = strlen(licence_plates) / LICENCE_PLATE_CHARS;
+
+    /*
+     *  loop through all licen plates
+     */
+    for (plate_id = 0; plate_id < num_of_plates; plate_id++)
     {
-        for (j = 0; j < 3; j++)
+        /*
+         *  check first 3 letters with last 3 letters to find palindromes
+         */
+        for (char_num = 0; char_num < 3; char_num++)
         {
-            if (spz[j+i*7] != spz[6 - j + i * 7])
+            left_char_id = (plate_id * LICENCE_PLATE_CHARS) + char_num;
+            right_char_id = ((plate_id + 1) * LICENCE_PLATE_CHARS) - 1 - char_num;
+
+            /*  if not the same, break for cycle */
+            if (licence_plates[left_char_id] != licence_plates[right_char_id])
                 break;
         }
-        if (j == 3)
-            printf("%.2s\n", spz + i * 7);
+
+        /*  if licence plate is a apalindrome   */
+        if (char_num == 3)  /* print first 2 letters    */
+            printf("%.2s\n", licence_plates + (plate_id * LICENCE_PLATE_CHARS));
     }
     return 0;
 }
@@ -372,7 +403,7 @@ int main()
              * print licence plate palindromes
              */
             case 'p':
-                prikaz_p(licence_plates);
+                PrintPalindromes(licence_plates);
                 break;
 
             /*
