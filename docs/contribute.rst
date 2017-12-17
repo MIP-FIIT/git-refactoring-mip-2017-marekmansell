@@ -1,0 +1,6 @@
+Contribute
+===========
+
+This project is licences under MIT licence and so is open to any changes you like. If you happen to add functionality or fix bugs which you would like to share with us, please create a pull request on the official github repo.
+
+If you happen to have any further questions, feel free to contact me via email `marek.mansell@gmail.com`
