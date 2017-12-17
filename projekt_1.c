@@ -6,6 +6,9 @@
 #define INPUT_FILE          "predaj.txt"    /* file with car data               */
 #define MAX_LINE_CHARS      50              /* longest possible line input      */
 #define LICENCE_PLATE_CHARS 7               /* num of chars in a licence plate  */
+#define TRUE                1
+#define FALSE               0
+
 
 /*
  * Function:  OpenRecords
@@ -66,6 +69,7 @@ FILE* OpenRecords(FILE *file)
     return file;
 }
 
+
 /*
  * Function:  EmployeeBonus
  * --------------------
@@ -112,7 +116,7 @@ int EmployeeBonus(long current_date, FILE *file)
         /*
          * Logic and printing part
          */
-        if (current_date - purchase_date >= 10000)  /* 10000 is one year    */
+        if (current_date - purchase_date >= 10000)  /* 10000 is one year defference */
         {
             int char_index = 0;     /* used in for cycle    */
 
@@ -203,6 +207,7 @@ int LoadLicencePlates(FILE *file, char **licence_plates)
     }
     return 0;
 }
+
 
 /*
  * Function:  PrintLicencePlates
@@ -295,56 +300,108 @@ int PrintPalindromes(char *licence_plates)
     return 0;
 }
 
-int prikaz_z(char *spz)
+
+/*
+ * Function:  BestSelling
+ * --------------------
+ * prints all best selling regions by licence plate
+ * in a 'XX <number>\n' format
+ *
+ *  licence_plates: pointer to licence plates string
+ *
+ *  returns: 0
+ *           returns -1 when licence_plates were not loaded
+ */
+
+int BestSelling(char *licence_plates)
 {
-    if (spz == NULL)
+    char (*found_prefixes)[3] = NULL;   /*  stores all found prefixes in a 2D array             */
+    int *count = NULL;                  /*                                                      */
+    int max_sales = 0;                  /*  stores the number of most sales in a single region  */
+    int plate_id, region_id;            /*  used in for cycles                                  */
+    int prefix_found;                   /*                                                      */
+    int cars;                           /*                                                      */
+    int num_of_found_regions = 0;       /*  stores hoe many different regions were found        */
+
+    cars = strlen(licence_plates) / LICENCE_PLATE_CHARS;
+
+    /* check whether licence plates are loaded, otherwise return -1 */
+    if (licence_plates == NULL)
         return -1;
-    char (*prefix)[3] = NULL;
-    int *count = NULL;
-    int max = 0, i, j, c = 0, cars, cached = 0;
-    cars = strlen(spz) / 7;
-    for (i = 0; i < cars; i++)
+
+    /*
+     *  loop through all licence plates and count all the sales
+     */
+    for (plate_id = 0; plate_id < cars; plate_id++)
     {
-        for (j = 0; j < cached; j++)
+        prefix_found = FALSE;
+
+        /*
+         *  loop through all previously found regions
+         */
+        for (region_id = 0; region_id < num_of_found_regions; region_id++)
         {
-            if (prefix != NULL && prefix[j][0] == *(spz + i * 7) && prefix[j][1] == *(spz + i * 7 + 1))
+
+            /*
+             *  if current prefix is in found_prefixes, increase the number in the array
+             */
+            if (found_prefixes != NULL
+                && found_prefixes[region_id][0] == *(licence_plates + plate_id * LICENCE_PLATE_CHARS)
+                && found_prefixes[region_id][1] == *(licence_plates + plate_id * LICENCE_PLATE_CHARS + 1))
             {
-                count[j]++;
-                c = 1;
-                max = (max > count[j]) ? (max) : (count[j]);
+                count[region_id]++;     /* increase region count    */
+                prefix_found = TRUE;    /* skip adding a new region */
+
+                /*  set max_sales to the biggest number of sales in a region    */
+                max_sales = (max_sales > count[region_id]) ? (max_sales) : (count[region_id]);
             }
         }
 
-        if (!(c))
+        if (prefix_found == FALSE)
         {
-            if (prefix == NULL)
+            /*
+             *  check whether arrays are created
+             *  if not, create them with one new region
+             *  if yes, append a new region
+             */
+            if (found_prefixes == NULL)
             {
-                prefix = malloc((cached + 2) * 2 * sizeof(char));
-                count = malloc((cached + 2) * sizeof(int));
+                found_prefixes = malloc((num_of_found_regions + 2) * 2 * sizeof(char));
+                count = malloc((num_of_found_regions + 2) * sizeof(int));
             }
             else
             {
-                prefix = (char *)realloc(prefix, (cached + 2) * 2 * sizeof(char));
-                count = (int *)realloc(count, (cached + 2) * sizeof(int));
+                found_prefixes = (char *)realloc(found_prefixes, (num_of_found_regions + 2) * 2 * sizeof(char));
+                count = (int *)realloc(count, (num_of_found_regions + 2) * sizeof(int));
             }
-            prefix[cached][0] = *(spz + i * 7);
-            prefix[cached][1] = *(spz + i * 7 + 1);
-            count[cached] = 1;
-            cached++;
-        }
-        c = 0;
 
+            /*  Save first 2 licence place characters in to the array   */
+            found_prefixes[num_of_found_regions][0] = *(licence_plates + plate_id * LICENCE_PLATE_CHARS);
+            found_prefixes[num_of_found_regions][1] = *(licence_plates + plate_id * LICENCE_PLATE_CHARS + 1);
+
+            count[num_of_found_regions] = 1;    /*  set number of sales in the new region to 1          */
+            num_of_found_regions++;             /*  increase the variable storing total num of regions  */
+        }
     }
-    for (j = 0; j < cached; j++)
+
+
+    /*
+     *  print best selling region / regions
+     */
+    for (region_id = 0; region_id < num_of_found_regions; region_id++)
     {
-        if (max == count[j])
+        if (max_sales == count[region_id])  /*  if best selling region  */
         {
-            printf("%c%c ", prefix[j][0], prefix[j][1]);
-            printf("%d\n", count[j]);
+            /*  print region prefix */
+            printf("%c%c ", found_prefixes[region_id][0], found_prefixes[region_id][1]);
+
+            /*  print number of sales in the region */
+            printf("%d\n", count[region_id]);
         }
     }
     return 0;
 }
+
 
 int main()
 {
@@ -382,7 +439,7 @@ int main()
              * print best selling region
              */
             case 'z':
-                prikaz_z(licence_plates);
+                BestSelling(licence_plates);
                 break;
 
             /*
