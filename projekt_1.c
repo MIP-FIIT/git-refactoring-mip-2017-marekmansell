@@ -286,10 +286,10 @@ int prikaz_z(char *spz)
 
 int main()
 {
-    char command;       /*  stores the typed in command                 */
-    char *spz = NULL;   /*  points to the licence plate array           */
-    FILE *file = NULL;  /*  points to the input file                    */
-    long date;          /*  stores the typed in date for command 'o'    */
+    char command;                   /*  stores the typed in command                 */
+    char *licence_plates = NULL;    /*  points to the licence plate array           */
+    FILE *file = NULL;              /*  points to the input file                    */
+    long date;                      /*  stores the typed in date for command 'o'    */
 
     /*
      *  Read all user commands and execute them
@@ -320,42 +320,42 @@ int main()
              * print best selling region
              */
             case 'z':
-                prikaz_z(spz);
+                prikaz_z(licence_plates);
                 break;
 
             /*
              * load licence plates and store them in to an array
              */
             case 'n':
-                LoadLicencePlates(file, &spz);
+                LoadLicencePlates(file, &licence_plates);
                 break;
 
             /*
              * prints licence plates
              */
             case 's':
-                PrintLicencePlates(spz);
+                PrintLicencePlates(licence_plates);
                 break;
 
             /*
              * print licence plate palindromes
              */
             case 'p':
-                prikaz_p(spz);
+                prikaz_p(licence_plates);
                 break;
 
             /*
              * exit command
              */
             case 'k':
-                return 0;
+                return 0;   /* exit program */
                 break;
 
             /*
              * blank line entered
              */
             case '\n':
-                break;
+                break;      /* do nothing   */
 
             /*
              * command not recognized
